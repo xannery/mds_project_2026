@@ -4,11 +4,13 @@ import pandas as pd
 
 st.set_page_config(page_title="Графики",layout="wide")
 
-st.header("График синусоида в Streamlit")
-with st.form("update_graph"):
-    st.form_submit_button("Обновить график")
+if 'delta' not in st.session_state:
+    st.session_state.delta = 3
 
-delta = st.sidebar.slider("Выберите диапазон для графика:", 1, 100, 2)
+st.header("График синусоида в Streamlit")
+
+with st.sidebar:
+    st.session_state.delta = st.slider("Выберите диапазон для графика:", 1, 20, st.session_state.delta)
 
 # Разделение страницы на две колонки
 col_1, col_2 = st.columns(2)
@@ -16,7 +18,7 @@ col_1, col_2 = st.columns(2)
 
 # Создание данных для графика
 x = np.linspace(0, 10, 100)
-y = np.sin(x) + delta
+y = np.sin(x) + st.session_state.delta
 
 df = pd.DataFrame({
     'x': x, 
@@ -33,4 +35,8 @@ with col_1:
     st.write("Среднее значение синусоиды:", df['sin(x)'].mean()) 
     st.dataframe(df)
 
-st.badge("График обновляется при изменении ползунка в сайдбаре")
+st.info("График обновляется при изменении ползунка в сайдбаре")
+
+expander = st.expander("debug", expanded=True)
+
+expander.text(st.session_state)
