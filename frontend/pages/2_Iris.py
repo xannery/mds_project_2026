@@ -32,3 +32,4 @@ st.scatter_chart(
     y=y_axis,
     color='Species',
 )
+
