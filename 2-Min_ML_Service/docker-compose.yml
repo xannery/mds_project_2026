@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./models.db:/app/models.db
+    command: uvicorn backend.api:app --host 0.0.0.0 --port 8000
+
+  frontend:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    command: streamlit run frontend/Main.py --server.port 8501 --server.address 0.0.0.0
+    depends_on:
+      - backend
