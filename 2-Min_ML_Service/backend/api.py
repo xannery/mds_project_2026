@@ -1,9 +1,13 @@
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from pathlib import Path
 from backend.schemas import TrainRequest
-from backend.ml.train import train_model  
+from backend.ml.train import train_model
 
 app = FastAPI(title="Min ML Service v1.0")
+
+# Создаём необходимые папки
+Path("data").mkdir(exist_ok=True)
+Path("models").mkdir(exist_ok=True)
 
 @app.get("/")
 def root():
@@ -11,10 +15,10 @@ def root():
 
 @app.post("/train")
 def train_endpoint(req: TrainRequest, background_tasks: BackgroundTasks):
-    if req.dataset_filename != "digits":
-        data_path = Path("data") / req.dataset_filename
-        if not data_path.exists():
-            raise HTTPException(status_code=404, detail=f"Датасет {req.dataset_filename} не найден")
+    data_path = Path("data") / req.dataset_filename
+    
+    if not data_path.exists() and req.dataset_filename != "digits":
+        raise HTTPException(status_code=404, detail=f"Датасет {req.dataset_filename} не найден")
     
     background_tasks.add_task(
         train_model,
@@ -22,7 +26,8 @@ def train_endpoint(req: TrainRequest, background_tasks: BackgroundTasks):
         model_name=req.model_name,
         model_type=req.model_type,
         hyperparameters=req.hyperparameters,
-        train_size=req.train_size
+        train_size=req.train_size,
+        target_column=req.target_column
     )
     
     return {
@@ -34,7 +39,6 @@ def train_endpoint(req: TrainRequest, background_tasks: BackgroundTasks):
 
 @app.get("/models/available")
 def get_available_models():
-    """Список доступных моделей для фронтенда"""
     return {
         "models": [
             {
@@ -45,7 +49,7 @@ def get_available_models():
             {
                 "type": "random_forest",
                 "name": "Random Forest",
-                "default_params": {"n_estimators": 100, "max_depth": None}
+                "default_params": {"n_estimators": 100, "max_depth": 10}
             }
         ]
     }
