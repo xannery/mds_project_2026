@@ -21,7 +21,7 @@
 
 ### Технологии
 
-- **Backend**: FastAPI + Pydantic
+- **Backend**: FastAPI + Pydanticы
 - **Frontend**: Streamlit
 - **ML**: scikit-learn
 - **БД**: SQLite

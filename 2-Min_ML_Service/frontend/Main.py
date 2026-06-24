@@ -5,7 +5,7 @@ import sqlite3
 from pathlib import Path
 
 st.set_page_config(page_title="Min ML Service", layout="wide")
-st.title("🔬 Min ML Service")
+st.title("Min ML Service")
 
 # BASE_URL = "http://127.0.0.1:8000"   # Локально
 BASE_URL = "http://backend:8000"       # Docker
@@ -38,7 +38,7 @@ if page == "Обучение модели":
         max_depth = st.selectbox("max_depth", [None, 5, 10, 15, 20])
         hyperparameters = {"n_estimators": n_estimators, "max_depth": max_depth}
 
-    if st.button("🚀 Запустить обучение", type="primary", use_container_width=True):
+    if st.button("Запустить обучение", type="primary", use_container_width=True):
         payload = {
             "dataset_filename": dataset_filename,
             "model_type": model_type,
@@ -52,7 +52,7 @@ if page == "Обучение модели":
             try:
                 response = requests.post(f"{BASE_URL}/train", json=payload, timeout=30)
                 if response.status_code == 200:
-                    st.success("✅ Обучение запущено!")
+                    st.success("Обучение запущено!")
                     st.json(response.json())
                 else:
                     st.error(f"Ошибка: {response.text}")
